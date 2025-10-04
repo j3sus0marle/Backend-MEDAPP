@@ -1,0 +1,9 @@
+{
+  "name": "backend-medapp",
+  "version": "1.0.0",
+  "description": "Backend FastAPI para MEDAPP",
+  "scripts": {
+    "dev": "C:/Users/omar-/Documents/Codigos/Web/Backend-MEDAPP/.venv/Scripts/python.exe -m uvicorn app:app --reload --host localhost --port 8000",
+    "start": "C:/Users/omar-/Documents/Codigos/Web/Backend-MEDAPP/.venv/Scripts/python.exe app.py"
+  }
+}
