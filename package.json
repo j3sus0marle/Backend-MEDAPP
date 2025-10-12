@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Backend FastAPI para MEDAPP",
   "scripts": {
-    "dev": ".venv\\Scripts\\python.exe -m uvicorn app:app --reload --host localhost --port 8000",
-    "dev:unix": ".venv/bin/python -m uvicorn app:app --reload --host localhost --port 8000",
+    "dev": ".venv\\Scripts\\python.exe -m uvicorn app:app --reload --host localhost --port 5000",
+    "dev:unix": ".venv/bin/python -m uvicorn app:app --reload --host localhost --port 5000",
     "start": ".venv\\Scripts\\python.exe app.py",
     "start:unix": ".venv/bin/python app.py"
   },

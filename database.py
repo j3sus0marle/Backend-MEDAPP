@@ -14,4 +14,5 @@ client = AsyncIOMotorClient(MONGO_URL)
 database = client[DATABASE_NAME]
 
 # Colecciones
-sintomas_collection = database.get_collection("Sintomas")
+campo_info_collection = database.get_collection("Campo_Informativo")
+info_pack_collection = database.get_collection("Paquete_Informacion")

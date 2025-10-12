@@ -1,6 +1,6 @@
 ﻿from fastapi import FastAPI
 from fastapi.responses import Response
-from routes import sintomas
+from routes import campos_info
 
 # Crear la aplicación FastAPI
 app = FastAPI(
@@ -10,7 +10,7 @@ app = FastAPI(
 )
 
 # Incluir las routes
-app.include_router(sintomas.router)
+app.include_router(campos_info.router)
 
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
@@ -25,7 +25,7 @@ def read_root():
         "version": "Prueba",
         "docs": "/docs",
         "endpoints": {
-            "sintomas": "/sintomas"
+            "info_campos":"/campos_info"
         }
     }
 
