@@ -7,5 +7,8 @@
     "dev:unix": ".venv/bin/python -m uvicorn app:app --reload --host localhost --port 8000",
     "start": ".venv\\Scripts\\python.exe app.py",
     "start:unix": ".venv/bin/python app.py"
+  },
+  "dependencies": {
+    "gapi-script": "^1.2.0"
   }
 }

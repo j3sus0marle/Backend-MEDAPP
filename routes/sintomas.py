@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from typing import List
 from controllers.sintomas_controller import SintomasController
-from models.sintoma import Sintoma, SintomaCreate, SintomaUpdate
+from models.sintoma_model import Sintoma, SintomaCreate, SintomaUpdate
 
 router = APIRouter(
     prefix="/sintomas",
