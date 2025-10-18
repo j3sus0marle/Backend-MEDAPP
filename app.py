@@ -22,7 +22,7 @@ app.include_router(auth.router)
 
 # Agregar middleware de sesión necesario para authlib
 app.add_middleware(SessionMiddleware, 
-secret_key=SESSION_SECRET)
+secret_key=os.getenv("SESSION_SECRET"))
 
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
@@ -37,11 +37,11 @@ def read_root():
         "version": "Prueba",
         "docs": "/docs",
         "endpoints": {
-            "info_campos":"/campos_info"
+            "info_campos":"/campos_info",
             "auth_login": "/auth/login"
         }
     }
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="localhost", port=8000)
+    uvicorn.run(app, host="localhost", port=5000)
