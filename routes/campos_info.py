@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
+from fastapi.encoders import jsonable_encoder
 from typing import List
 from controllers.campo_info_controller import CampoInfoController
 from controllers.auth_controller import AuthController
@@ -36,7 +37,7 @@ async def create_campo(campo: CampoInformativoCreate):
     try:
         return await CampoInfoController.create_campo(
             titulo=campo.titulo,
-            terminos_relacionados=campo.terminos_relacionados,
+            terminos_relacionados=[tr.model_dump() for tr in campo.terminos_relacionados],
             info_pack_id=str(campo.info_pack_id) if campo.info_pack_id else None
         )
     except Exception as e:

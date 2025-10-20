@@ -51,23 +51,31 @@ class CampoInfoController:
         except Exception as e:
             raise e
         
+    
     @staticmethod
-    async def create_campo(titulo: str, terminos_relacionados: Optional[List[dict]] = None, info_pack_id: Optional[str] = None):
+    async def create_campo(
+    titulo: str,
+    terminos_relacionados: Optional[List[dict]] = None,
+    info_pack_id: Optional[str] = None
+    ):
         """Crear nuevo campo informativo"""
+
         doc = {
-            "titulo": titulo,
-            "terminos_relacionados": terminos_relacionados or []
+        "titulo": titulo,
+        "terminos_relacionados": terminos_relacionados or []
         }
-        if info_pack_id:
+
+        if info_pack_id and ObjectId.is_valid(info_pack_id):
             doc["info_pack_id"] = ObjectId(info_pack_id)
-        
+
         result = await campo_info_collection.insert_one(doc)
         new_campo = await campo_info_collection.find_one({"_id": result.inserted_id})
+        
         return {
-            "id": str(new_campo["_id"]),
-            "titulo": new_campo.get("titulo", ""),
-            "terminos_relacionados": new_campo.get("terminos_relacionados", []),
-            "info_pack_id": str(new_campo["info_pack_id"]) if new_campo.get("info_pack_id") else None
+        "id": str(new_campo["_id"]),
+        "titulo": new_campo.get("titulo", ""),
+        "terminos_relacionados": new_campo.get("terminos_relacionados", []),
+        "info_pack_id": str(new_campo.get("info_pack_id")) if new_campo.get("info_pack_id") else None
         }
 
     @staticmethod
