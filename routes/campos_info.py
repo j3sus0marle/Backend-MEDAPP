@@ -50,7 +50,7 @@ async def update_campo(campo_id: str, campo_update: CampoInformativoUpdate):
         campo = await CampoInfoController.update_campo(
             campo_id=campo_id,
             titulo=campo_update.titulo,
-            terminos_relacionados=campo_update.terminos_relacionados,
+            terminos_relacionados=[tr.model_dump() for tr in campo_update.terminos_relacionados],
             info_pack_id=str(campo_update.info_pack_id) if campo_update.info_pack_id else None
         )
         if campo:
