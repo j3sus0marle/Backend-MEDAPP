@@ -1,6 +1,7 @@
 from authlib.integrations.starlette_client import OAuth
-from fastapi import Request
-from jose import jwt
+from fastapi import Depends, HTTPException, Request, status 
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from jose import jwt, JWTError
 import os
 from dotenv import load_dotenv
 
@@ -8,6 +9,7 @@ load_dotenv()
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+security = HTTPBearer()
 JWT_SECRET = os.getenv("JWT_SECRET", "secret")
 
 oauth = OAuth()
@@ -42,3 +44,18 @@ class AuthController:
         }
         access_token = jwt.encode(payload, JWT_SECRET, algorithm='HS256')
         return {'access_token': access_token, 'user': payload}
+    
+    def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
+        token = credentials.credentials
+        try:
+            payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+            email = payload.get("email")
+            if email is None:
+                raise HTTPException(status_code=401, detail="Token inválido o sin correo.")
+            return payload
+        except JWTError:
+            raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token inválido o expirado",
+            headers={"WWW-Authenticate": "Bearer"},
+            )
