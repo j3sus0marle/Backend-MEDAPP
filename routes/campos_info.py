@@ -1,21 +1,20 @@
 from fastapi import APIRouter, HTTPException, Depends
-from fastapi.encoders import jsonable_encoder
 from typing import List
 from controllers.campo_info_controller import CampoInfoController
 from controllers.auth_controller import AuthController
-from models.info_camp_model import CampoInformativoDB_ID,CampoInformativoDB, CampoInformativoCreate, CampoInformativoUpdate
-from dependencies.auth_dep import get_current_user
+from models.campo_info_model import CampoInformativoDB_ID,CampoInformativoDB, CampoInformativoCreate, CampoInformativoUpdate
 
 router = APIRouter(
     prefix="/campos_info",
     tags=["campos_info"],
-    dependencies=[Depends(get_current_user)] 
+    dependencies=[Depends(AuthController.verify_token)] 
     
 )
 
 # ---- GET todos los campos ----
 @router.get("/", response_model=List[CampoInformativoDB])
 async def get_campos():
+    """Regresa todos los campos informativos."""
     try:
         return await CampoInfoController.get_all_campos()
     except Exception as e:
@@ -24,6 +23,7 @@ async def get_campos():
 # ---- GET por id ----
 @router.get("/{campo_id}", response_model=CampoInformativoDB_ID)
 async def get_campo(campo_id: str):
+    """Regresa un campo informativo en particular, usando campo_id."""
     try:
         campo = await CampoInfoController.get_campo_by_id(campo_id)
         if campo:
@@ -35,6 +35,7 @@ async def get_campo(campo_id: str):
 # ---- POST crear nuevo campo ----
 @router.post("/", response_model=CampoInformativoDB)
 async def create_campo(campo: CampoInformativoCreate):
+    """Permite crear un nuevo campo informativo, para agregar en la base de datos."""
     try:
         return await CampoInfoController.create_campo(
             titulo=campo.titulo,
@@ -45,8 +46,9 @@ async def create_campo(campo: CampoInformativoCreate):
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
 # ---- PUT actualizar campo ----
-@router.put("/{campo_id}", response_model=CampoInformativoDB)
+@router.put("/{campo_id}", response_model=CampoInformativoDB)  
 async def update_campo(campo_id: str, campo_update: CampoInformativoUpdate):
+    """ Permite realizar algun cambio a un campo informativo."""
     try:
         campo = await CampoInfoController.update_campo(
             campo_id=campo_id,
@@ -63,6 +65,7 @@ async def update_campo(campo_id: str, campo_update: CampoInformativoUpdate):
 # ---- DELETE eliminar campo ----
 @router.delete("/{campo_id}")
 async def delete_campo(campo_id: str):
+    """Elimina un campo informativo de la base de datos, usando campo_id."""
     try:
         deleted = await CampoInfoController.delete_campo(campo_id)
         if deleted:

@@ -4,8 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 import os
 from dotenv import load_dotenv
-from routes import campos_info
-from routes import auth
+from routes import campos_info, auth, paquetes_info
 
 load_dotenv()
 
@@ -33,6 +32,7 @@ app.add_middleware(
 
 # Incluir las routes
 app.include_router(campos_info.router)
+app.include_router(paquetes_info.router)
 app.include_router(auth.router)
 
 @app.get("/favicon.ico", include_in_schema=False)
@@ -48,7 +48,8 @@ def read_root():
         "version": "Prueba",
         "docs": "/docs",
         "endpoints": {
-            "info_campos":"/campos_info",
+            "campos_info":"/campos_info",
+            "paquete_info":"/paquete_info",
             "auth_login": "/auth/login"
         }
     }

@@ -1,7 +1,7 @@
 from typing import List, Optional
 from pydantic import BaseModel, Field
 from bson import ObjectId
-
+from .paquete_info_model import PaqueteInformacionDB
 # Helper para usar ObjectId en Pydantic
 
 class PyObjectId(ObjectId):
@@ -48,34 +48,9 @@ class CampoInformativoDB(CampoInformativoBase):
         json_encoders = {ObjectId: str}
         validate_by_name = True
         
-class Texto(BaseModel):
-    subtitulo: str
-    lugar: int
-    texto: str
-
-class Imagen(BaseModel):
-    caption: str
-    lugar: int
-    imagen: str  #BASE64?
-    
-class Audio (BaseModel):
-    caption: str
-    lugar: int
-    link: str  #link?
-    
-class Video (BaseModel):
-    titulo: str
-    lugar: int
-    link: str #link?
-    
-class PaqueteInformacion(BaseModel):
-    textos: List[Texto] = []
-    audios: List[Audio] = []  # Puedes hacer otra clase si cada audio tiene más info
-    imagenes: List[Imagen] = []
-    videos: List[Video] = []
     
 class CampoInformativoDB_ID(CampoInformativoDB):
-    info_pack_data: PaqueteInformacion
+    info_pack_data: PaqueteInformacionDB
         
     class Config:
         json_encoders = {ObjectId: str,PyObjectId: str}
