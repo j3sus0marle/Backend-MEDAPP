@@ -16,3 +16,12 @@ async def callback(request: Request):
         return await AuthController.callback(request)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post('/refresh')
+async def refresh(request: Request):
+    return await AuthController.refresh(request)
+
+@router.post('/logout')
+async def logout():
+    return await AuthController.logout()

@@ -1,5 +1,6 @@
 ﻿from fastapi import FastAPI
 from fastapi.responses import Response
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 import os
 from dotenv import load_dotenv
@@ -16,13 +17,23 @@ app = FastAPI(
     version="Prueba",
 )
 
+#(Google OAuth)
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=os.getenv("SESSION_SECRET_KEY", "una_clave_segura_y_larga")  # Usa una clave real y secreta
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Incluir las routes
 app.include_router(campos_info.router)
 app.include_router(auth.router)
-
-# Agregar middleware de sesión necesario para authlib
-app.add_middleware(SessionMiddleware, 
-secret_key=os.getenv("SESSION_SECRET"))
 
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():

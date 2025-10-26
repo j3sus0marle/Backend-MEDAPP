@@ -4,11 +4,12 @@ from typing import List
 from controllers.campo_info_controller import CampoInfoController
 from controllers.auth_controller import AuthController
 from models.info_camp_model import CampoInformativoDB_ID,CampoInformativoDB, CampoInformativoCreate, CampoInformativoUpdate
+from dependencies.auth_dep import get_current_user
 
 router = APIRouter(
     prefix="/campos_info",
     tags=["campos_info"],
-    dependencies=[Depends(AuthController.verify_token)] 
+    dependencies=[Depends(get_current_user)] 
     
 )
 
