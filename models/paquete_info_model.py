@@ -1,28 +1,26 @@
-from typing import List
-from pydantic import BaseModel, Field
+from typing import List,Any
 from bson import ObjectId
+from pydantic import BaseModel, Field, field_serializer, ConfigDict
+from pydantic_core import core_schema
 
-# Helper para ObjectId en Pydantic
 class PyObjectId(ObjectId):
     @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
+    def __get_pydantic_core_schema__(cls, source, handler):
+        return core_schema.no_info_after_validator_function(
+            cls.validate,
+            core_schema.str_schema(),
+            serialization=core_schema.plain_serializer_function_ser_schema(str),
+        )
 
     @classmethod
-    def validate(cls, v, info=None):
+    def validate(cls, v: Any) -> ObjectId:
+        if isinstance(v, ObjectId):
+            return v
         if not ObjectId.is_valid(v):
             raise ValueError("ID inválido")
         return ObjectId(v)
 
-    @classmethod
-    def __get_pydantic_json_schema__(cls, core_schema, handler):
-        return {
-            "type": "string",
-            "title": "ObjectId",
-            "examples": ["64f9c5b6f0d3c8e123456789"]
-        }
-
-# ---- Modelos de contenido ----
+# --- Modelos de contenido ---
 class Texto(BaseModel):
     subtitulo: str
     lugar: int
@@ -43,7 +41,7 @@ class Video(BaseModel):
     lugar: int
     link: str
 
-# ---- Modelo principal del paquete ----
+# --- Modelo principal del paquete ---
 class PaqueteInformacionBase(BaseModel):
     textos: List[Texto] = []
     audios: List[Audio] = []
@@ -56,6 +54,12 @@ class PaqueteInformacionCreate(PaqueteInformacionBase):
 class PaqueteInformacionDB(PaqueteInformacionBase):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
 
-    class Config:
-        json_encoders = {ObjectId: str, PyObjectId: str}
-        validate_by_name = True
+    model_config = ConfigDict(
+        populate_by_name=True,  # reemplaza a validate_by_name
+        arbitrary_types_allowed=True  # permite tipos como ObjectId
+    )
+
+    # Serializador moderno (reemplaza json_encoders)
+    @field_serializer("id")
+    def serialize_objectid(self, v: PyObjectId, _info):
+        return str(v)
