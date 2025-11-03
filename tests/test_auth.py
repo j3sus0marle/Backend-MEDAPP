@@ -12,7 +12,6 @@ def make_token(email="test@example.com"):
     payload = {"email": email, "name": "Tester"}
     return auth_controller.create_token(payload, 15)
 
-
 def test_auth_validate_session_valid_token():
     """Debe retornar los datos del usuario si el token es válido."""
 
