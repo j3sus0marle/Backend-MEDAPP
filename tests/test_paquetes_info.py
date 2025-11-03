@@ -14,7 +14,6 @@ def setup_module(module):
     token = make_token()
     client.cookies.set("access_token", token)
 
-# ---- GET todos los paquetes ----
 def test_get_paquetes(monkeypatch):
     async def fake_get_all_packs():
         return [{"_id": "012345678987654321012345", 
@@ -53,7 +52,6 @@ def test_get_paquetes(monkeypatch):
     assert isinstance(response.json(), list)
     assert "_id" in response.json()[0]
 
-# ---- GET paquete por ID ----
 def test_get_paquete_by_id(monkeypatch):
     async def fake_get_pack_by_id(pack_id):
         return {"_id": "012345678987654321012345", "textos": [], "audios": [], "imagenes": [], "videos": []}
@@ -74,7 +72,6 @@ def test_create_paquete(monkeypatch):
     assert response.status_code == 200
     assert response.json()["_id"] == "012345678987654321012345"
 
-# ---- PUT actualizar paquete ----
 def test_update_paquete(monkeypatch):
     async def fake_update_pack(pack_id, **kwargs):
         return {"id": pack_id, **kwargs}
@@ -85,7 +82,6 @@ def test_update_paquete(monkeypatch):
     assert response.status_code == 200
     assert response.json()["_id"] == "012345678987654321012345"
 
-# ---- DELETE eliminar paquete ----
 def test_delete_paquete(monkeypatch):
     async def fake_delete_pack(pack_id):
         return True
