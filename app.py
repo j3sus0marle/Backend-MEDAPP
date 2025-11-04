@@ -8,7 +8,6 @@ from routes import campos_info, auth, paquetes_info
 
 load_dotenv()
 
-
 # Crear la aplicación FastAPI
 app = FastAPI(
     title="Backend MEDAPP",
@@ -34,8 +33,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Incluir las routes
-app.include_router(campos_info.router)
+# Incluir las routes - CORREGIDO
+app.include_router(campos_info.public_router)   # Endpoints públicos (modelo 3D)
+app.include_router(campos_info.protected_router) # Endpoints protegidos (CRUD)
 app.include_router(paquetes_info.router)
 app.include_router(auth.router)
 
