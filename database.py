@@ -16,3 +16,4 @@ database = client[DATABASE_NAME]
 # Colecciones
 campo_info_collection = database.get_collection("Campo_Informativo")
 info_pack_collection = database.get_collection("Paquete_Informacion")
+regiones_collection = database.get_collection("Region")

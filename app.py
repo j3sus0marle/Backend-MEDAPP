@@ -34,8 +34,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Incluir las routes
-app.include_router(campos_info.router)
+app.include_router(campos_info.router) # Endpoints protegidos (CRUD)
 app.include_router(paquetes_info.router)
 app.include_router(auth.router)
 
