@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 import os
 from dotenv import load_dotenv
-from routes import campos_info, auth, paquetes_info
+from routes import campos_info, auth, paquetes_info, regiones
 
 load_dotenv()
 
@@ -32,10 +32,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Incluir las routes - CORREGIDO
-app.include_router(campos_info.public_router)   # Endpoints públicos (modelo 3D)
-app.include_router(campos_info.protected_router) # Endpoints protegidos (CRUD)
+app.include_router(regiones.router)
+app.include_router(campos_info.router) # Endpoints protegidos (CRUD)
 app.include_router(paquetes_info.router)
 app.include_router(auth.router)
 
@@ -52,11 +50,14 @@ def read_root():
         "version": "Prueba",
         "docs": "/docs",
         "endpoints": {
-            "campos_info":"/campos_info",
-            "paquete_info":"/paquete_info",
+            "region":"/regiones",
+            "campo_info":"/campos_info",
+            "paquete_info":"/paquetes_info",
             "auth_login": "/auth/login"
         }
     }
+    
+
 
 if __name__ == "__main__":
     import uvicorn

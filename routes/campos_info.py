@@ -17,28 +17,7 @@ protected_router = APIRouter(
     dependencies=[Depends(AuthController.verify_token)] 
 )
 
-# ENDPOINTS PÚBLICOS (sin autenticación) ----
-@public_router.get("/regions/{mesh_name}")
-async def get_region_info(mesh_name: str):
-    """
-    Obtener información médica de una región del cuerpo por su meshName
-    Para usar con el modelo 3D del frontend - Sin autenticación requerida
-    """
-    try:
-        return await CampoInfoController.get_region_by_mesh_name(mesh_name)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
-
-@public_router.get("/health/status")
-async def health_check():
-    """Verificar estado de la base de datos - Sin autenticación requerida"""
-    try:
-        return await CampoInfoController.health_check()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
-
-# ENDPOINTS PROTEGIDOS (con autenticación) ----
-@protected_router.get("/", response_model=List[CampoInformativoDB])
+@router.get("/", response_model=List[CampoInformativoDB])
 async def get_campos():
     """Regresa todos los campos informativos."""
     try:
@@ -46,7 +25,7 @@ async def get_campos():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
-@protected_router.get("/{campo_id}", response_model=CampoInformativoDB_ID)
+@router.get("/{campo_id}", response_model=CampoInformativoDB_ID)
 async def get_campo(campo_id: str):
     """Regresa un campo informativo en particular, usando campo_id."""
     try:
@@ -57,7 +36,7 @@ async def get_campo(campo_id: str):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"ID inválido: {str(e)}")
 
-@protected_router.post("/", response_model=CampoInformativoDB)
+@router.post("/", response_model=CampoInformativoDB)
 async def create_campo(campo: CampoInformativoCreate):
     """Permite crear un nuevo campo informativo, para agregar en la base de datos."""
     try:
@@ -69,7 +48,7 @@ async def create_campo(campo: CampoInformativoCreate):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
-@protected_router.put("/{campo_id}", response_model=CampoInformativoDB)  
+@router.put("/{campo_id}", response_model=CampoInformativoDB)  
 async def update_campo(campo_id: str, campo_update: CampoInformativoUpdate):
     """ Permite realizar algun cambio a un campo informativo."""
     try:
@@ -85,7 +64,7 @@ async def update_campo(campo_id: str, campo_update: CampoInformativoUpdate):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error: {str(e)}")
 
-@protected_router.delete("/{campo_id}")
+@router.delete("/{campo_id}")
 async def delete_campo(campo_id: str):
     """Elimina un campo informativo de la base de datos, usando campo_id."""
     try:
