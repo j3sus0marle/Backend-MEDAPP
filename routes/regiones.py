@@ -2,14 +2,14 @@ from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 from controllers.region_controller import RegionController
 from controllers.auth_controller import AuthController
-
+from models.region_model import RegionDB
 router = APIRouter(
     prefix="/regiones",
     tags=["regiones"],
     dependencies=[Depends(AuthController.verify_token)] 
 )
 
-@router.get("/{mesh_name}")
+@router.get("/{mesh_name}", response_model=RegionDB)
 async def get_region_info(mesh_name: str):
     """
     Obtener información médica de una región del cuerpo por su meshName
