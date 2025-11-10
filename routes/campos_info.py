@@ -2,19 +2,12 @@ from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 from controllers.campo_info_controller import CampoInfoController
 from controllers.auth_controller import AuthController
-from models.campo_info_model import CampoInformativoDB_ID,CampoInformativoDB, CampoInformativoCreate, CampoInformativoUpdate
+from models.campo_info_model import CampoInformativoDB, CampoInformativoCreate, CampoInformativoUpdate
 
-# Router para endpoints PÚBLICOS (sin autenticación)
-public_router = APIRouter(
-    prefix="/campos_info",
-    tags=["campos_info"]
-)
-
-# Router para endpoints PROTEGIDOS (con autenticación)
-protected_router = APIRouter(
+router = APIRouter(
     prefix="/campos_info",
     tags=["campos_info"],
-    dependencies=[Depends(AuthController.verify_token)] 
+    #dependencies=[Depends(AuthController.verify_token)] 
 )
 
 @router.get("/", response_model=List[CampoInformativoDB])
@@ -25,7 +18,7 @@ async def get_campos():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
-@router.get("/{campo_id}", response_model=CampoInformativoDB_ID)
+@router.get("/{campo_id}", response_model=CampoInformativoDB)
 async def get_campo(campo_id: str):
     """Regresa un campo informativo en particular, usando campo_id."""
     try:

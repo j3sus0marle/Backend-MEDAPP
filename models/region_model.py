@@ -1,7 +1,8 @@
-from typing import Optional, Any
+from typing import Optional, List, Any
 from pydantic import BaseModel, Field, ConfigDict, field_serializer
 from pydantic_core import core_schema
 from bson import ObjectId
+
 
 # --- Helper para ObjectId ---
 class PyObjectId(ObjectId):
@@ -22,33 +23,42 @@ class PyObjectId(ObjectId):
         return ObjectId(v)
 
 
-# --- Modelos principales ---
-class RegionBase(BaseModel):
-    meshName: str
-    info_camp_id: Optional[PyObjectId] = Field(default=None, alias="info_camp_id")
+# --- Modelo de contenido individual ---
+class ContenidoItem(BaseModel):
+    tipo: str
+    titulo: str
+    info: str
+    lugar: Optional[int] = None
 
+class TerminoRelacionado(BaseModel):
+    nombre: str 
+    tipo: str 
 
-class RegionCreate(RegionBase):
-    """Modelo para crear un documento Mesh."""
-    pass
-
-
-class RegionUpdate(BaseModel):
-    """Modelo para actualizar un documento Mesh."""
-    meshName: Optional[str] = None
-    info_camp_id: Optional[PyObjectId] = None
-
-
-class RegionDB(RegionBase):
-    """Modelo de lectura/escritura desde MongoDB."""
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+# --- Modelo principal de respuesta ---
+class RegionGET(BaseModel):
+    region_name: str = Field(..., description="Nombre de la región (meshName)")
+    titulo: str = Field(..., description="Título del campo informativo")
+    contenido: List[ContenidoItem] = Field(default_factory=list, description="Lista de elementos multimedia ordenados por lugar")
+    terminos_relacionados: List[TerminoRelacionado] = Field(default_factory=list, description="Lista de términos relacionados")
 
     model_config = ConfigDict(
         from_attributes=True,
         populate_by_name=True,
-        arbitrary_types_allowed=True
+        arbitrary_types_allowed=True,
+        json_schema_extra={
+            "example": {
+                "region_name": "Cabeza",
+                "titulo": "Anatomía de la cabeza",
+                "contenido": [
+                    {"tipo": "audio", "titulo": "Explicación general", "info": "https://audio.link/123", "lugar": 1},
+                    {"tipo": "texto", "titulo": "Detalles anatómicos", "info": "El cráneo protege el cerebro.", "lugar": 2},
+                    {"tipo": "video", "titulo": "Video ilustrativo", "info": "https://youtube.com/example", "lugar": 3}
+                ],
+                "terminos_relacionados": [
+                    {"nombre": "Cráneo", "tipo": "Hueso"},
+                    {"nombre": "Cerebro", "tipo": "Órgano"},
+                    {"nombre": "Nervios craneales", "tipo": "Sistema"}
+                ]
+            }
+        }
     )
-
-    @field_serializer("id")
-    def serialize_id(self, v: PyObjectId, _info):
-        return str(v)

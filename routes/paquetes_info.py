@@ -7,7 +7,7 @@ from models.paquete_info_model import PaqueteInformacionDB, PaqueteInformacionCr
 router = APIRouter(
     prefix="/paquetes_info",
     tags=["paquetes_info"],
-    dependencies=[Depends(AuthController.verify_token)]
+    #dependencies=[Depends(AuthController.verify_token)]
 )
 
 # ---- GET todos los paquetes ----

@@ -59,16 +59,3 @@ class CampoInformativoDB(CampoInformativoBase):
     @field_serializer("id")
     def serialize_id(self, v: PyObjectId, _info):
         return str(v)
-
-
-class CampoInformativoDB_ID(CampoInformativoDB):
-    info_pack_data: PaqueteInformacionDB
-
-    model_config = ConfigDict(
-        populate_by_name=True,
-        arbitrary_types_allowed=True
-    )
-
-    @field_serializer("id")
-    def serialize_id(self, v: PyObjectId, _info):
-        return str(v)
