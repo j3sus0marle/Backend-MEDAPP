@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 import os
 from dotenv import load_dotenv
-from routes import campos_info, auth, paquetes_info, regiones
+from routes import campos_info, auth, paquetes_info, regiones, imagenes
 
 load_dotenv()
 
@@ -36,6 +36,7 @@ app.include_router(regiones.router)
 app.include_router(campos_info.router) # Endpoints protegidos (CRUD)
 app.include_router(paquetes_info.router)
 app.include_router(auth.router)
+app.include_router(imagenes.router)
 
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
