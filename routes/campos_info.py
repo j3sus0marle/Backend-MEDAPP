@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 from controllers.campo_info_controller import CampoInfoController
-from controllers.auth_controller import AuthController
-from models.campo_info_model import CampoInformativoDB, CampoInformativoCreate, CampoInformativoUpdate
+from controllers.auth_controller import AuthController, require_role
+from models.campo_info_model import CampoInformativoDB_ID,CampoInformativoDB, CampoInformativoCreate, CampoInformativoUpdate
 
 router = APIRouter(
     prefix="/campos_info",
@@ -30,7 +30,10 @@ async def get_campo(campo_id: str):
         raise HTTPException(status_code=400, detail=f"ID inválido: {str(e)}")
 
 @router.post("/", response_model=CampoInformativoDB)
-async def create_campo(campo: CampoInformativoCreate):
+async def create_campo(
+    campo: CampoInformativoCreate,
+    user_data: dict = Depends(require_role('maestro'))  # Solo maestros pueden crear
+):
     """Permite crear un nuevo campo informativo, para agregar en la base de datos."""
     try:
         return await CampoInfoController.create_campo(
@@ -42,7 +45,11 @@ async def create_campo(campo: CampoInformativoCreate):
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
 @router.put("/{campo_id}", response_model=CampoInformativoDB)  
-async def update_campo(campo_id: str, campo_update: CampoInformativoUpdate):
+async def update_campo(
+    campo_id: str, 
+    campo_update: CampoInformativoUpdate,
+    user_data: dict = Depends(require_role('maestro'))  # Solo maestros pueden actualizar
+):
     """ Permite realizar algun cambio a un campo informativo."""
     try:
         campo = await CampoInfoController.update_campo(
@@ -58,7 +65,10 @@ async def update_campo(campo_id: str, campo_update: CampoInformativoUpdate):
         raise HTTPException(status_code=400, detail=f"Error: {str(e)}")
 
 @router.delete("/{campo_id}")
-async def delete_campo(campo_id: str):
+async def delete_campo(
+    campo_id: str,
+    user_data: dict = Depends(require_role('maestro'))  # Solo maestros pueden eliminar
+):
     """Elimina un campo informativo de la base de datos, usando campo_id."""
     try:
         deleted = await CampoInfoController.delete_campo(campo_id)
