@@ -1,4 +1,4 @@
-from typing import List,Any
+from typing import List,Any, Optional
 from bson import ObjectId
 from pydantic import BaseModel, Field, field_serializer, ConfigDict
 from pydantic_core import core_schema
@@ -22,22 +22,22 @@ class PyObjectId(ObjectId):
 
 # --- Modelos de contenido ---
 class Texto(BaseModel):
-    subtitulo: str
+    subtitulo: Optional[str] = None
     lugar: int
     texto: str
 
 class Audio(BaseModel):
-    titulo: str
+    titulo: Optional[str] = None
     lugar: int
     link: str
 
 class Imagen(BaseModel):
-    titulo: str
+    titulo: Optional[str] = None
     lugar: int
     link: str
 
 class Video(BaseModel):
-    titulo: str
+    titulo: Optional[str] = None
     lugar: int
     link: str
 

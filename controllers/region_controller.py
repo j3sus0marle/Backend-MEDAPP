@@ -72,7 +72,7 @@ class RegionController:
             for item in lista:
                 contenido.append({
                 "tipo": tipo,
-                "titulo": item.get("titulo") or item.get("subtitulo"),
+                "titulo": item.get("titulo") or item.get("subtitulo") or "",
                 "info": item.get("link") or item.get("texto"),
                 "lugar": item.get("lugar", 0)
                 })
