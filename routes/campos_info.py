@@ -1,13 +1,13 @@
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 from controllers.campo_info_controller import CampoInfoController
-from controllers.auth_controller import AuthController, require_role
-from models.campo_info_model import CampoInformativoDB_ID,CampoInformativoDB, CampoInformativoCreate, CampoInformativoUpdate
+from controllers.auth_controller import AuthController
+from models.campo_info_model import CampoInformativoDB, CampoInformativoCreate, CampoInformativoUpdate
 
 router = APIRouter(
     prefix="/campos_info",
     tags=["campos_info"],
-    #dependencies=[Depends(AuthController.verify_token)] 
+    dependencies=[Depends(AuthController.verify_token)] 
 )
 
 @router.get("/", response_model=List[CampoInformativoDB])
@@ -32,7 +32,7 @@ async def get_campo(campo_id: str):
 @router.post("/", response_model=CampoInformativoDB)
 async def create_campo(
     campo: CampoInformativoCreate,
-    user_data: dict = Depends(require_role('maestro'))  # Solo maestros pueden crear
+    user_data: dict = Depends(AuthController.require_role('Maestro'))  # Solo maestros pueden crear
 ):
     """Permite crear un nuevo campo informativo, para agregar en la base de datos."""
     try:
@@ -48,7 +48,7 @@ async def create_campo(
 async def update_campo(
     campo_id: str, 
     campo_update: CampoInformativoUpdate,
-    user_data: dict = Depends(require_role('maestro'))  # Solo maestros pueden actualizar
+    user_data: dict = Depends(AuthController.require_role('maestro'))  # Solo maestros pueden actualizar
 ):
     """ Permite realizar algun cambio a un campo informativo."""
     try:
@@ -67,7 +67,7 @@ async def update_campo(
 @router.delete("/{campo_id}")
 async def delete_campo(
     campo_id: str,
-    user_data: dict = Depends(require_role('maestro'))  # Solo maestros pueden eliminar
+    user_data: dict = Depends(AuthController.require_role('maestro'))  # Solo maestros pueden eliminar
 ):
     """Elimina un campo informativo de la base de datos, usando campo_id."""
     try:

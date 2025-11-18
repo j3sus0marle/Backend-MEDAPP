@@ -14,8 +14,8 @@ database = client[DATABASE_NAME]
 # Colecciones
 campo_info_collection = database.get_collection("Campo_Informativo")
 info_pack_collection = database.get_collection("Paquete_Informacion")
-regiones_collection = database.get_collection("regiones")
-users_collection = database.get_collection("users")
+regiones_collection = database.get_collection("Region")
+users_collection = database.get_collection("User")
 
 # Funciones para usuarios
 async def get_user_by_email(email: str):
@@ -33,7 +33,7 @@ async def update_user_last_login(user_id: str):
     from bson import ObjectId
     await users_collection.update_one(
         {"_id": ObjectId(user_id)},
-        {"$set": {"last_login": datetime.now(timezone.utc)}}  # ✅ AHORA FUNCIONA
+        {"$set": {"last_login": datetime.now(timezone.utc)}} 
     )
 
 async def update_user_role(user_id: str, new_role: str):

@@ -1,5 +1,6 @@
-from fastapi import APIRouter,File, HTTPException, UploadFile,status
+from fastapi import APIRouter, File, HTTPException, UploadFile, status, Depends
 from fastapi.responses import FileResponse, JSONResponse
+from controllers.auth_controller import AuthController
 import shutil
 import os
 from dotenv import load_dotenv
@@ -8,7 +9,7 @@ load_dotenv()
 router = APIRouter(
     prefix="/imagenes",
     tags=["imagenes"],
-    #dependencies=[Depends(AuthController.verify_token)] 
+    dependencies=[Depends(AuthController.verify_token)] 
 )
 
 

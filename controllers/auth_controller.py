@@ -7,8 +7,7 @@ import os
 from datetime import timedelta, datetime, timezone
 from dotenv import load_dotenv
 import secrets
-from database import get_user_by_email, create_user, update_user_last_login, get_user_by_google_sub
-
+from database import users_collection
 load_dotenv()
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
@@ -50,9 +49,9 @@ class AuthController:
         user = token.get('userinfo') or await oauth.google.parse_id_token(request, token)
         
         # Buscar usuario en la base de datos por google_sub o email
-        db_user = await get_user_by_google_sub(user.get('sub'))
+        db_user = await AuthController.get_user_by_google_sub(user.get('sub'))
         if not db_user:
-            db_user = await get_user_by_email(user.get('email'))
+            db_user = await AuthController.get_user_by_email(user.get('email'))
         
         if not db_user:
             # Si el usuario no existe en la BD, crear uno nuevo con rol por defecto
@@ -60,15 +59,15 @@ class AuthController:
                 'email': user.get('email'),
                 'name': user.get('name'),
                 'google_sub': user.get('sub'),
-                'role': 'estudiante',
+                'role': 'Estudiante',
                 'is_active': True,
                 'created_at': datetime.now(timezone.utc),
                 'last_login': datetime.now(timezone.utc)
             }
-            db_user = await create_user(user_data)
+            db_user = await AuthController.create_user(user_data)
         else:
             # Actualizar último login
-            await update_user_last_login(str(db_user['_id']))
+            await AuthController.update_user_last_login(str(db_user['_id']))
         
         # Verificar si el usuario está activo
         if not db_user.get('is_active', True):
@@ -79,7 +78,7 @@ class AuthController:
             'sub': user.get('sub'),
             'email': user.get('email'),
             'name': user.get('name'),
-            'role': db_user.get('role', 'estudiante'),
+            'role': db_user.get('role', 'Estudiante'),
             'user_id': str(db_user['_id'])
         }
         
@@ -150,12 +149,12 @@ class AuthController:
             payload = jwt.decode(session["refresh_token"], JWT_SECRET, algorithms=["HS256"])
             
             # Verificar que el usuario aún existe y está activo
-            db_user = await get_user_by_email(payload.get('email'))
+            db_user = await AuthController.get_user_by_email(payload.get('email'))
             if not db_user or not db_user.get('is_active', True):
                 raise HTTPException(status_code=403, detail="Usuario no autorizado")
             
             # Actualizar el payload con datos actualizados de la BD
-            payload['role'] = db_user.get('role', 'estudiante')
+            payload['role'] = db_user.get('role', 'Estudiante')
             payload['user_id'] = str(db_user['_id'])
             
         except JWTError:
@@ -183,20 +182,50 @@ class AuthController:
         response.delete_cookie("session_token")
         return response
 
-# Función para verificar roles
-def require_role(required_role: str):
-    async def role_dependency(request: Request):
-        payload = AuthController.verify_token(request)
-        user_role = payload.get('role')
+    @staticmethod
+    # Función para verificar roles
+    def require_role(required_role: str):
         
-        if user_role != required_role:
-            raise HTTPException(
+        async def role_dependency(request: Request):
+            payload = AuthController.verify_token(request)
+            user_role = payload.get('role')
+            print(user_role)
+            if user_role != required_role:
+                raise HTTPException(
                 status_code=403, 
                 detail=f"Se requiere rol {required_role}. Tu rol actual es {user_role}"
-            )
-        return payload
-    return role_dependency
+                )
+            return payload
+        return role_dependency
 
-# Verificador específico para rol maestro
-def require_maestro(request: Request):
-    return require_role('maestro')(request)
+    async def get_user_by_email(email: str):
+        return await users_collection.find_one({"email": email})
+
+    async def get_user_by_google_sub(google_sub: str):
+        return await users_collection.find_one({"google_sub": google_sub})
+
+    async def create_user(user_data: dict):
+        result = await users_collection.insert_one(user_data)
+        created_user = await users_collection.find_one({"_id": result.inserted_id})
+        return created_user
+
+    async def update_user_last_login(user_id: str):
+        from bson import ObjectId
+        await users_collection.update_one(
+            {"_id": ObjectId(user_id)},
+            {"$set": {"last_login": datetime.now(timezone.utc)}} 
+        )
+
+    async def update_user_role(user_id: str, new_role: str):
+        from bson import ObjectId
+        result = await users_collection.update_one(
+            {"_id": ObjectId(user_id)},
+            {"$set": {"role": new_role}}
+        )
+        return result.modified_count > 0
+
+
+        # Verificador específico para rol maestro
+    @staticmethod
+    def require_maestro(request: Request):
+        return AuthController.require_role('Maestro')(request)

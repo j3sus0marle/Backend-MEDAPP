@@ -7,7 +7,7 @@ from models.region_model import RegionGET
 router = APIRouter(
     prefix="/regiones",
     tags=["regiones"],
-    #dependencies=[Depends(AuthController.verify_token)] 
+    dependencies=[Depends(AuthController.verify_token)] 
 )
 
 @router.get("/{mesh_name}", response_model=RegionGET)
