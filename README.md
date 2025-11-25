@@ -7,8 +7,11 @@ Backend FastAPI para aplicación médica.
 ### Prerrequisitos
 - Python 3.8+
 - Git
+- Mongosh
+- Cuenta MongoDB Atlas
 
-### Instalación y Ejecución
+### Instalación y Ejecución de Backend
+
 
 #### 🚀 Opción 1: Setup Automático
 ```powershell
@@ -51,7 +54,23 @@ npm run dev:unix
 # Windows: .\run-dev.ps1
 # Linux/Mac: ./run-dev.sh
 ```
+### Creacion de Base de Datos
+Para crear la base de datos, es necesario tener una cuenta de MongoDB Atlas y base de datos en la nube. 
 
+En .env introduce URI de base de datos en nube.
+```
+# Base de datos
+MONGO_URL=mongodb://localhost:27017
+DATABASE_NAME=medapp_db
+```
+Descarga librerias necesarias
+```
+  pip install -r requirements.txt
+```
+Ejecuta Script de Inicializacion de Base de Datos
+```
+python init_db.py
+```
 ### Opción rápida por plataforma
 ```powershell
 # Windows (PowerShell)
@@ -74,6 +93,7 @@ chmod +x run-dev.sh
 ## 🌐 URLs
 
 Una vez ejecutando:
-- **API**: http://localhost:8000
-- **Documentación**: http://localhost:8000/docs
-- **Health Check**: http://localhost:8000/health
+- **API**: http://localhost:5000
+- **Documentación**: http://localhost:5000/docs
+- **Health Check**: http://localhost:5000/health
+
