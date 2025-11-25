@@ -48,17 +48,39 @@ async def init_db():
 
     # Paquete_Informacion
     info_pack_example = {
-        "_id": ObjectId(),
-        "textos": [
-            {
-                "subtitulo": "Ejemplo",
-                "lugar": 1,
-                "texto": "Contenido de ejemplo"
-            }
-        ],
-        "audios": [],
-        "imagenes": [],
-        "videos": []
+    "textos": [
+        {
+            "subtitulo": "Introducción",
+            "lugar": 1,
+            "texto": "Este es un texto de ejemplo para el paquete de información."
+        }
+    ],
+    "audios": [
+        {
+            "titulo": "Audio introductorio",
+            "lugar": 2,
+            "link": "http://localhost:5000/audios/intro_cabeza.mp3"
+        }
+    ],
+    "imagenes": [
+        {
+            "titulo": "Imagen ejemplo 1",
+            "lugar": 3,
+            "link": "http://localhost:5000/imagenes/ver/cabeza_ejemplo_1.png"
+        },
+        {
+            "titulo": "Imagen ejemplo 2",
+            "lugar": 4,
+            "link": "http://localhost:5000/imagenes/ver/cabeza_ejemplo_2.png"
+        }
+    ],
+    "videos": [
+        {
+            "titulo": "Video introductorio",
+            "lugar": 5,
+            "link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        }
+        ]
     }
 
     # Campo_Informativo
